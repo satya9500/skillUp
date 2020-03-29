@@ -66,6 +66,7 @@ module.exports = {
             })
         } catch (err) {
             console.log(err);
+            res.send({ success: false });
         }
     },
     leaderboard: async (req, res) => {
