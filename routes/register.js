@@ -18,7 +18,7 @@ module.exports = {
         try {
             response = await axios.get(`https://api.github.com/users/${username}`);
             if (!response.data.login) { //throw new Error('User Not Found');   
-                res.send({ success: false });
+                res.end({ success: false });
             } else {
 
                 // let site = `https://github.com/users/${username}/contributions?to=2020-03-28`;
@@ -28,19 +28,25 @@ module.exports = {
                 // console.log(data);
                 // data = data.split(" ");
                 // contribution = data[6];
-                async function sendMail() {
-                    var transporter = nodemailer.createTransport({
-                        service: 'Gmail',
-                        auth: {
-                            user: process.env.GMAILEMAIL,
-                            pass: process.env.GMAILPASSWORD
-                        }
-                    });
-                    let info = await transporter.sendMail({
-                        from: '"AIT CodeDown" <codedown2020@gmail.com>',
-                        to: email,
-                        subject: "CodeDown 2020",
-                        html: `
+
+                let query = `insert into Registration values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0);`;
+                db.query(query, async (err, result) => {
+                    if (err)
+                        res.send({ success: false });
+                    else {
+
+                        var transporter = nodemailer.createTransport({
+                            service: 'Gmail',
+                            auth: {
+                                user: process.env.GMAILEMAIL,
+                                pass: process.env.GMAILPASSWORD
+                            }
+                        });
+                        let info = await transporter.sendMail({
+                            from: '"AIT CodeDown" <codedown2020@gmail.com>',
+                            to: email,
+                            subject: "CodeDown 2020",
+                            html: `
             <h2>Congratulations!! You have registered for CodeDown 2020</h2>
             <b>This is an intra-AIT competition. You will be developing your projects in the given 30 days period.
                 This has to be done on github, your contributions would be collected form github and you will also be
@@ -58,14 +64,10 @@ module.exports = {
                 Phone : 9325611554
             </b>
             `
-                    });
-                }
+                        });
 
-                let query = `insert into Registration values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0);`;
-                db.query(query, (err, result) => {
-                    if (err)
-                        res.send({ success: false });
-                    else { sendMail(); res.send({ success: true }); }
+                        res.send({ success: true });
+                    }
                 })
             }
         } catch (err) {
