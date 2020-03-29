@@ -96,6 +96,49 @@ module.exports = {
     },
     getLeaderboard: async (req, res) => {
         res.render('leaderboard');
+    },
+    mailAll: async (req, res) => {
+        let query = `select email from Registration;`;
+        db.query(query, async (err, result) => {
+            console.log(result.recordsets[0]);
+            for (let i = 0; i < result.recordsets[0].length; i++) {
+
+                var transporter = nodemailer.createTransport({
+                    service: 'Gmail',
+                    auth: {
+                        user: process.env.GMAILEMAIL,
+                        pass: process.env.GMAILPASSWORD
+                    }
+                });
+                let info = await transporter.sendMail({
+                    from: '"AIT CodeDown" <codedown2020@gmail.com>',
+                    to: result.recordsets[0][i].email,
+                    subject: "CodeDown 2020",
+                    html: `
+            <b>Hello everyone,<br>
+I hope by now you guys have joined the slack channel.
+<br>
+Please share the primary tech Stack on which you guys would be working on, in the slack #general channel.<br>
+One can work on multiple tech Stacks but the primary tech Stack will only be considered for evaluation. So, it's better to focus on honing a single skill perfectly in this time period.<br>
+
+If you have still not joined, follow the link below and get in the slack group :<br>
+https://join.slack.com/t/ossdev-workspace/shared_invite/zt-d6kpend1-yA6SEoHDvGUrUt2U~lOvOA
+                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr style=""><td height="28" style="line-height:28px;">&nbsp;</td></tr><tr><td style=""><table border="0" width="280" cellspacing="0" cellpadding="0" style="border-collapse:separate;background-color:#ffffff;border:1px solid #dddfe2;border-radius:3px;font-family:Helvetica, Arial, sans-serif;margin:0px auto;"><tr><td style="font-size:14px;font-weight:bold;padding:8px 8px 0px 8px;text-align:center;">ossDev</td></tr><tr><td style="color:#90949c;font-size:12px;font-weight:normal;text-align:center;">Public group · 3 members</td></tr><tr><td style="padding:8px 12px 12px 12px;"><table border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%;"><tr><td style="background-color:#4267b2;border-radius:3px;text-align:center;"><a style="color:#3b5998;text-decoration:none;cursor:pointer;width:100%;" href="https://www.facebook.com/plugins/group/join/popup/?group_id=199364098179172&amp;source=email_campaign_plugin" target="_blank" rel="noopener"><table border="0" cellspacing="0" cellpadding="3" align="center" style="border-collapse:collapse;"><tr><td style="border-bottom:3px solid #4267b2;border-top:3px solid #4267b2;color:#FFF;font-family:Helvetica, Arial, sans-serif;font-size:12px;font-weight:bold;">Join Group</td></tr></table></a></td></tr></table></td></tr></table></td></tr><tr style=""><td height="28" style="line-height:28px;">&nbsp;</td></tr></table>
+                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;"><tr style=""><td height="28" style="line-height:28px;">&nbsp;</td></tr><tr><td style=""><table border="0" width="280" cellspacing="0" cellpadding="0" style="border-collapse:separate;background-color:#ffffff;border:1px solid #dddfe2;border-radius:3px;font-family:Helvetica, Arial, sans-serif;margin:0px auto;"><tr><td style="font-size:14px;font-weight:bold;padding:8px 8px 0px 8px;text-align:center;">ossdev-workspace</td></tr><tr><td style="color:#90949c;font-size:12px;font-weight:normal;text-align:center;">Slack Group</td></tr><tr><td style="padding:8px 12px 12px 12px;"><table border="0" cellspacing="0" cellpadding="0" style="border-collapse:collapse;width:100%;"><tr><td style="background-color:#ff5050;border-radius:3px;text-align:center;"><a style="color:#ff5050;text-decoration:none;cursor:pointer;width:100%;" href="https://join.slack.com/t/ossdev-workspace/shared_invite/zt-d6kpend1-yA6SEoHDvGUrUt2U~lOvOA" target="_blank" rel="noopener"><table border="0" cellspacing="0" cellpadding="3" align="center" style="border-collapse:collapse;"><tr><td style="border-bottom:3px solid #ff5050;border-top:3px solid #ff5050;color:#FFF;font-family:Helvetica, Arial, sans-serif;font-size:12px;font-weight:bold;">Join Group</td></tr></table></a></td></tr></table></td></tr></table></td></tr><tr style=""><td height="28" style="line-height:28px;">&nbsp;</td></tr></table>
+
+
+                For any queries Contact:<br>
+                Email: codedown2020@gmail.com<br>
+                Phone : 9325611554
+            </b>
+            `
+                });
+
+
+
+            }
+            res.send({ mail: 'sent' });
+        })
     }
 }
 

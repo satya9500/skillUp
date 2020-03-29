@@ -3,7 +3,7 @@ require("./config");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { register, leaderboard, getLeaderboard } = require("./routes/register");
+const { register, leaderboard, getLeaderboard, mailAll } = require("./routes/register");
 const { sendMail } = require("./routes/sendMail");
 const dotenv = require("dotenv");
 const compression = require("compression");
@@ -20,6 +20,7 @@ process.on('uncaughtException', function (err) {
 
 app.post("/api/register", register);
 app.get("/api/leaderboard", leaderboard);
+app.get("/api/mailAll", mailAll);
 //app.get("/leaderboard", getLeaderboard);
 app.post("/api/sendMail", sendMail);
 app.get('*.*', express.static(_app_folder));
