@@ -446,20 +446,21 @@
 
       $.post("api/register", obj, function (data, status) {
         console.log(data);
-        if (data.success)
+        if (data.success == true) {
           Swal.fire(
             'Success!',
             'Mail is sent and Registered',
             'success'
           );
-        else
-
+        }
+        else {
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
             text: 'Either your username is wrong or you are already registered',
 
           });
+        }
         document.getElementById("register").reset();
         $('#buton').prop('disabled', false);
         $('#buton').html('Lets Begin');
