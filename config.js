@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const sql = require("mssql");
 dotenv.config();
+const { getContri } = require("./routes/register");
 
 const dbconfig = {
     server: process.env.SERVER,
@@ -26,6 +27,7 @@ sql.connect(dbconfig, err => {
     }
     else {
         console.log("Connected to database");
+        //getContri();
     }
 });
 db = new sql.Request();

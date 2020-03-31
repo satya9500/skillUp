@@ -13,7 +13,7 @@ module.exports = {
         let email = req.body.email;
         let mentor = req.body.mentor;
         let response;
-        let contribution = 0;
+        let contribution;
 
         try {
             response = await axios.get(`https://api.github.com/users/${username}`);
@@ -21,15 +21,15 @@ module.exports = {
                 res.end({ success: false });
             } else {
 
-                // let site = `https://github.com/users/${username}/contributions?to=2020-03-28`;
-                // const result = await axios.get(site);
-                // let data = cheerio.load(result.data);
-                // data = data('body > div > div > h2').text();
+                let site = `https://github.com/users/${username}/contributions?to=2020-03-29`;
+                const result = await axios.get(site);
+                let data = cheerio.load(result.data);
+                data = data('body > div > div > h2').text();
                 // console.log(data);
-                // data = data.split(" ");
-                // contribution = data[6];
+                data = data.split(" ");
+                contribution = data[6];
 
-                let query = `insert into Registration values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0);`;
+                let query = `insert into Registration values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0,${sqlstring.escape(contribution)});`;
                 db.query(query, async (err, result) => {
                     if (err)
                         res.send({ success: false });
@@ -96,6 +96,34 @@ module.exports = {
     },
     getLeaderboard: async (req, res) => {
         res.render('leaderboard');
+    },
+    getContri: async (req, res) => {
+        let query = `select github_username from Registration;`;
+        try {
+            db.query(query, async (err, result) => {
+                if (err) throw err;
+                console.log(result.recordsets[0]);
+                for (let i = 0; i < result.recordsets[0].length; i++) {
+                    let contribution = 0;
+                    let username = result.recordsets[0][i].github_username;
+                    let site = `https://github.com/users/${username}/contributions?to=2020-03-29`;
+                    const body = await axios.get(site);
+                    let data = cheerio.load(body.data);
+                    data = data('body > div > div > h2').text();
+                    // console.log(data);
+                    data = data.split(" ");
+                    contribution = data[6];
+                    //console.log(`${username}:${contribution}`);
+                    let query2 = `update Registration set contri_till_reg=${sqlstring.escape(contribution)} where github_username=${sqlstring.escape(username)};`;
+                    db.query(query2, (err, result) => {
+                        if (err) throw err;
+                        console.log(username + ':' + contribution);
+                    })
+                }
+            })
+        } catch (err) {
+            console.log(err.stack);
+        }
     }
 }
 

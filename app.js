@@ -3,7 +3,7 @@ require("./config");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { register, leaderboard, getLeaderboard } = require("./routes/register");
+const { register, leaderboard, getLeaderboard, getContri } = require("./routes/register");
 const { sendMail } = require("./routes/sendMail");
 const dotenv = require("dotenv");
 const compression = require("compression");
@@ -13,6 +13,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(compression());
+
+
 
 process.on('uncaughtException', function (err) {
     console.log('### BIG ONE (%s)', err);
