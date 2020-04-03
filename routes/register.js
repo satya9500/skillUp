@@ -18,6 +18,8 @@ module.exports = {
         try {
             response = await axios.get(`https://api.github.com/users/${username}`);
             if (!response.data.login) { //throw new Error('User Not Found');   
+                console.log(response);
+                console.log('User Not Found!');
                 res.end({ success: false });
             } else {
 
@@ -29,10 +31,9 @@ module.exports = {
                 data = data.split(" ");
                 contribution = data[6];
 
-                let query = `insert into Registration values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0,${sqlstring.escape(contribution)});`;
+                let query = `insert into Registration (name,github_username,contributions,year,tech_stack,email,mentor,mentor_points,contri_till_reg) values (${sqlstring.escape(name)},${sqlstring.escape(username)},0,${sqlstring.escape(year)},${sqlstring.escape(techStack)},${sqlstring.escape(email)},${sqlstring.escape(mentor)},0,${sqlstring.escape(contribution)});`;
                 db.query(query, async (err, result) => {
-                    if (err)
-                        res.send({ success: false });
+                    if (err) { console.log(err); res.send({ success: false }); }
                     else {
 
                         var transporter = nodemailer.createTransport({
