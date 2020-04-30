@@ -26,6 +26,7 @@
                 <th scope="col">GitHub Handle</th>
                 <th scope="col">GitHub Contribution</th>
                 <th scope="col">Mentor Points</th>
+                <th scope="col">Final Points</th>
             </tr>
         </thead>
         <tbody>
@@ -46,10 +47,10 @@
             newRow += `
             <tr class="table-light">
                 <th scope="row">${i + 1}</th>
-                <td>${data['success'][0][i].github_username}</td>
-                
+                <td><a href="http://www.github.com/${data['success'][0][i].github_username}">${data['success'][0][i].github_username}</a></td>
                 <td>${data['success'][0][i].contributions}</td>
                 <td>${data['success'][0][i].mentor_points}</td>
+                <td>${data['success'][0][i].mentor_points + data['success'][0][i].contributions}</td>
             </tr>`;
         }
 
